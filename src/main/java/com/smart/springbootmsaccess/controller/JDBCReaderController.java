@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,18 @@ public class JDBCReaderController {
     public ResponseEntity<?> getAllData() {
         try {
             List<Book> bookList = jdbcReaderService.getAllBooks();
+            return ResponseEntity.ok(bookList);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new String(e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/exportDataToExcelCSV")
+    public ResponseEntity<?> exportDataToExcelCSV(HttpServletResponse response) {
+        try {
+            List<Book> bookList = jdbcReaderService.exportDataToExcelCSV(response);
             return ResponseEntity.ok(bookList);
         } catch (Exception e) {
             log.error(e.getMessage());
